@@ -1,0 +1,292 @@
+<?php
+//
+
+// debug function.
+function debug_info($object) {
+	$file = fopen('/var/log/services', 'a+');
+	fwrite($file, print_r($object, TRUE));
+	fclose($file);
+}
+
+/**
+ * Implements hook_menu().
+ */
+function bm_services_menu() {
+	return array(
+		'bm_services' => array(
+			'page callback' => 'bm_services_test_page',
+			'access callback' => TRUE,
+		),
+	);
+}
+
+function bm_services_test_page() {
+
+
+	return 'hello world';
+}
+
+/**
+ * Implements hook_services_resources().
+ */
+function bm_services_services_resources() {
+	$definitions = array(
+		'user' => array(
+			'actions' => array(
+				'simple_register' => array(
+					'help' => t('Simple Create User'),
+					'callback' => '_user_resource_simple_create',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'mail',
+							'type' => 'string',
+							'description' => 'The register user mail address',
+							'optional' => FALSE,
+							'source' => 'data'
+						)
+					),
+				),
+			),
+		),
+		'node' => array(
+			'actions' => array(
+				'simple_create' => array(
+					'help' => t('Simple Create node'),
+					'callback' => '_node_resource_simple_create',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'title',
+							'type' => 'string',
+							'description' => 'Picture name',
+							'optional' => FALSE,
+							'source' => 'data'
+						),
+						array(
+							'name' => 'uid',
+							'type' => 'int',
+							'description' => 'The uid post picture',
+							'source' => 'data'
+						),
+					),
+				),
+				'simple_retrieve' => array(
+					'help' => t('Simple fetch list of pictures'),
+					'callback' => '_node_resource_retrieve_list',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'num',
+							'type' => 'int',
+							'description' => 'The number of pictures that you want to retrieve',
+							'optional' => TRUE,
+							'source' => 'data'
+						),
+						array(
+							'name' => 'offset',
+							'type' => 'int',
+							'description' => 'The postion of list in pictures table',
+							'optional' => TRUE,
+							'source' => 'data'
+						),
+						array(
+							'name' => 'uid',
+							'type' => 'int',
+							'description' => 'The user ID of pictures',
+							'optional' => TRUE,
+							'source' => 'data',
+						),
+					),
+				),
+			),
+		),
+	);
+
+	return $definitions;
+}
+
+// Retrieve pictures list.
+function _node_resource_retrieve_list($args) {
+	// we customer the views build code.
+	$views_picture = views_get_view('user_pictures');
+	$views_picture->set_display('block');
+	$filters = $views_picture->display_handler->get_option('filters');
+	if (isset($args['uid']) && is_numeric($args['uid'])) {
+		$uid_filter = array(
+			'id' => 'uid',
+			'table' => 'node',
+			'field' => 'uid',
+			'relationship' => 'node',
+			'group_type' => 'group',
+			'operator' => 'in',
+			'value' => array($args['uid']),
+			'group' => 1,
+			'exposed' => FALSE,
+			'is_grouped' => FALSE,
+		);
+		$filters = array_merge($filters, array('uid' => $uid_filter));
+		$views_picture->display_handler->set_option('filters', $filters);
+	}
+
+	
+	$offset = isset($args['offset']) ? $args['offset'] : 0;
+	$num = isset($args['num']) ? $args['num'] : 10;
+
+  $pager = array(
+    'type' => 'full',
+    'options' => array(
+      'offset' => intval($offset)
+    ),
+  );
+  $pager['options']['items_per_page'] = $num;
+  $views_picture->display_handler->set_option('items_per_page', $num);
+  $views_picture->display_handler->set_option('offset', $offset);
+  $views_picture->display_handler->set_option('use_pager', TRUE);
+  $views_picture->display_handler->set_option('pager', $pager);
+
+  // Execute views.
+  $views_picture->execute();
+  $results = $views_picture->result;
+
+  $items = array();
+  foreach ($results as $result) {
+  	$item = array(
+  		'nid' => $result->nid,
+  		'title' => $result->node_title,
+  		'field_boomi_image' => file_create_url($result->field_field_boomi_image[0]['raw']['uri'])
+  	);
+  	$items[] = $item;
+  }
+  $total_count = $views_picture->query->pager->total_items;
+  $ret = array('items' => $items, 'total_count' => $total_count);
+  return $ret;
+}
+
+// simple_create resource create.
+function _user_resource_simple_create($account) {
+  // Adds backwards compatability with regression fixed in #1083242
+  $account = _services_arg_value($account, 'account');
+
+  // Load the required includes for saving profile information
+  // with drupal_form_submit().
+  module_load_include('inc', 'user', 'user.pages');
+
+  // register a new user
+  $form_state['values'] = $account;
+  // $form_state['values']['pass'] = array(
+  //   'pass1' => $account['pass'],
+  //   'pass2' => $account['pass'],
+  // );
+  $form_state['values']['op'] = variable_get('services_user_create_button_resource_create', t('Create new account'));
+
+  // execute the register form
+  drupal_form_submit('user_register_form', $form_state);
+  // find and store the new user into the form_state
+  if(isset($form_state['values']['uid'])) {
+    $form_state['user'] = user_load($form_state['values']['uid']);
+  }
+
+  // Error if needed.
+  if ($errors = form_get_errors()) {
+    return services_error(implode(" ", $errors), 406, array('form_errors' => $errors));
+  }
+  else {
+    $user = array('uid' => $form_state['user']->uid);
+    if ($uri = services_resource_uri(array('user', $user['uid']))) {
+      $user['uri'] = $uri;
+    }
+    return $user;
+  }
+}
+
+// simple node create resource create.
+function _node_resource_simple_create($args) {
+	$field_name = 'field_boomi_image';
+	$node_type = 'picture';
+
+	if (!isset($_FILES[$field_name]) && FALSE) {
+		return services_error(t('Boomi image should not empty'), 500);
+	}
+	else {
+		list($files, $file_objs) = _node_resource_simple_file_save_upload($node_type, $field_name);
+	}
+	$file = $files[0];
+
+	$node = (Object)null;
+	$node->type = $node_type;
+	node_object_prepare($node);
+	$node->title = mb_convert_encoding($args['title'], 'UTF-8', 'auto');
+	$node->language = 'en';
+	$node->uid = $args['uid'];
+	$node->status = 1;
+	$node->comment = 2;
+
+	$node->{$field_name}[LANGUAGE_NONE][0] = $file;
+
+	$node->is_new = TRUE;
+	try {
+		$ret = node_save($node);
+	}
+	catch (Exception $e) {
+		return services_error(t("Upload picture error"));
+	}
+	return array('nid' => $node->nid, 'uri' => $node->{$field_name}[LANGUAGE_NONE][0]['uri']);
+}
+
+// Simple picture create function
+function _node_resource_simple_file_save_upload($node_type, $field_name) {
+	// Rerange files.
+	$copy_of_files = $_FILES;
+	$copy_of_files['files'] = array();
+
+	foreach ($_FILES as $file_name => $value) {
+		unset($copy_of_files[$file_name]);
+		$copy_of_files['files']['name'][$file_name] = $_FILES[$file_name]['name'];
+		$copy_of_files['files']['type'][$file_name] = $_FILES[$file_name]['type'];
+		$copy_of_files['files']['tmp_name'][$file_name] = $_FILES[$file_name]['tmp_name'];
+		$copy_of_files['files']['error'][$file_name] = $_FILES[$file_name]['error'];
+		$copy_of_files['files']['size'][$file_name] = $_FILES[$file_name]['size'];
+	}
+	$_FILES = $copy_of_files;
+
+  // The field_name on node_type should be checked in the access callback.
+  $instance = field_info_instance('node', $field_name, $node_type);
+  $field = field_read_field($field_name);
+
+  $destination = file_field_widget_uri($field, $instance );
+  if (isset($destination) && !file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
+    return services_error(t('The upload directory %directory for the file field !name could not be created or is not accessible. A newly uploaded file could not be saved in this directory as a consequence, and the upload was canceled.', array('%directory' => $destination, '!name' => $field_name)));
+  }
+
+  $validators = array(
+    'file_validate_extensions' =>  (array)$instance['settings']['file_extensions'],
+    'file_validate_size' => array(0 => parse_size($instance['settings']['max_filesize'])),
+  );
+
+  $files = $file_objs = array();
+
+  // Let the file module handle the upload and moving.
+  if (!$file = file_save_upload($field_name, $validators, $destination, FILE_EXISTS_RENAME) ) {  	
+    return services_error(t('Failed to upload file. @upload', array('@upload' => $field_name)), 406);
+  }
+
+  if ($file->fid) {
+    // Add info to the array that will be returned/encdoed to xml/json.
+    $files[] = array(
+      'fid' => $file->fid,
+      'uri' => services_resource_uri(array('file', $file->fid)),
+    );
+    $file_objs[] = $file;
+  }
+  else {
+    return services_error(t('An unknown error occurred'), 500);
+  }
+
+  return array($files, $file_objs);
+}
+
+function static_true() {
+	return TRUE;
+}
+

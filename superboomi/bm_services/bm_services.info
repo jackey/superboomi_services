@@ -1,0 +1,9 @@
+name = Superboomi REST Server
+description = Provides an extension for REST server.
+package = Superboomi Services
+core = 7.x
+version = 0.0.1beta
+
+dependencies[] = rest_server
+dependencies[] = email_registration
+
