@@ -39,6 +39,17 @@ function features_picture_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Field: Content: boomi_image */
+  $handler->display->display_options['fields']['field_boomi_image']['id'] = 'field_boomi_image';
+  $handler->display->display_options['fields']['field_boomi_image']['table'] = 'field_data_field_boomi_image';
+  $handler->display->display_options['fields']['field_boomi_image']['field'] = 'field_boomi_image';
+  $handler->display->display_options['fields']['field_boomi_image']['label'] = '';
+  $handler->display->display_options['fields']['field_boomi_image']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_boomi_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_boomi_image']['settings'] = array(
+    'image_style' => '',
+    'image_link' => '',
+  );
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
