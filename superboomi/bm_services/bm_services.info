@@ -8,4 +8,4 @@ dependencies[] = rest_server
 dependencies[] = email_registration
 dependencies[] = features_picture
 dependencies[] = token
-dependencies[] = pets
+dependencies[] = pet
