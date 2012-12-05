@@ -286,6 +286,27 @@ function _node_resource_simple_file_save_upload($node_type, $field_name) {
   return array($files, $file_objs);
 }
 
+/**
+ * Implements hook_node_insert()
+ */
+function features_people_node_insert($node) {
+	// Get all admin user.
+	$query = db_select('users_roles', 'ur')
+		->fields('ur')
+		->condition('rid', 3)
+		->execute();
+
+  	while ($row = $query->fetchAssoc()) {
+  		$user = user_load($row['uid']);
+		pet_send_mail(
+			'notify_admin_when_new_picture', 
+			array('mail' => $user->mail, 'uid' => $node->uid),
+			array('nid' => $node->nid)
+		);
+  	}
+
+}
+
 function static_true() {
 	return TRUE;
 }

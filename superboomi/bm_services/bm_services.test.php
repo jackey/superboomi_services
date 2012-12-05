@@ -33,29 +33,29 @@ function json_post($url, $data, $files = array()) {
 $base_url = 'http://yangchenglank.local/superboomi_service/';
 
 //====================================================================================================
-$api_register = 'user/simple_register';
+// $api_register = 'user/simple_register';
 
-$register_data = json_post($base_url. $api_register, array(
-	'mail' => 'jziwenchen@gmail.com',
-));
-
-print_r($register_data);
-
-
-//====================================================================================================
-// $api_post_picture = 'node/simple_create';
-
-// $node_data = json_post($base_url. $api_post_picture, array(
-// 	'uid' => '1',
-// 	'title' => 'picture'
-// ), array(
-// 	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
+// $register_data = json_post($base_url. $api_register, array(
+// 	'mail' => 'jziwenchen@gmail.com',
 // ));
 
-// print_r($node_data);
+// print_r($register_data);
+
 
 //====================================================================================================
-$api_retrieve = "node/simple_retrieve";
+$api_post_picture = 'node/simple_create';
+
+$node_data = json_post($base_url. $api_post_picture, array(
+	'uid' => '1',
+	'title' => 'picture'
+), array(
+	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
+));
+
+print_r($node_data);
+
+//====================================================================================================
+// $api_retrieve = "node/simple_retrieve";
 
 // $pictures_data = json_post($base_url. $api_retrieve, array());
 
