@@ -1,0 +1,13 @@
+<?php
+/**
+ * @file
+ * Drupal needs this blank file.
+ */
+
+/**
+ * Implements hook_node_insert()
+ */
+function features_people_node_insert($node) {
+	$user = user_load($node->uid);
+	$title = $node->title;
+}

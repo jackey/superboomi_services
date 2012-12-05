@@ -1,0 +1,11 @@
+name = Features People
+description = People
+core = 7.x
+package = superboomi
+version = 7.x-1.0
+project = features_people
+dependencies[] = features
+dependencies[] = field_sql_storage
+dependencies[] = text
+features[features_api][] = api:1
+features[field][] = user-user-field_nickname

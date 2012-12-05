@@ -27,14 +27,25 @@ function json_post($url, $data, $files = array()) {
 	return $ret_data;
 }
 
-// $register_data = json_post("http://yangchenglank.local/test_service/user/simple_register", array(
-// 	'mail' => 'jziwenchen3@gmail.com',
-// ));
+// Server
+//$base_url = 'http://tianzifang.cn/yangchenglank.server/yangchenglank/html/superboomi_service/';
+// Local
+$base_url = 'http://yangchenglank.local/superboomi_service/';
 
-// print_r($register_data);
+//====================================================================================================
+$api_register = 'user/simple_register';
+
+$register_data = json_post($base_url. $api_register, array(
+	'mail' => 'jziwenchen@gmail.com',
+));
+
+print_r($register_data);
 
 
-// $node_data = json_post("http://yangchenglank.local/test_service/node/simple_create", array(
+//====================================================================================================
+// $api_post_picture = 'node/simple_create';
+
+// $node_data = json_post($base_url. $api_post_picture, array(
 // 	'uid' => '1',
 // 	'title' => 'picture'
 // ), array(
@@ -43,6 +54,9 @@ function json_post($url, $data, $files = array()) {
 
 // print_r($node_data);
 
-$pictures_data = json_post("http://yangchenglank.local/test_service/node/simple_retrieve", array());
+//====================================================================================================
+$api_retrieve = "node/simple_retrieve";
 
-print_r($pictures_data);
+// $pictures_data = json_post($base_url. $api_retrieve, array());
+
+// print_r($pictures_data);

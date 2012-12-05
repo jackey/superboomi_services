@@ -6,4 +6,5 @@ version = 0.0.1beta
 
 dependencies[] = rest_server
 dependencies[] = email_registration
+dependencies[] = features_picture
 
