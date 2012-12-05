@@ -32,5 +32,18 @@ function features_people_default_pet() {
     "recipient_callback" : "",
     "rdf_mapping" : []
   }');
+  $items['notify_admin_when_picture_publish'] = entity_import('pet', '{
+    "name" : "notify_admin_when_picture_publish",
+    "title" : "notify_admin_when_picture_publish",
+    "subject" : "Your Picture [node:title] Was Published Just Now",
+    "mail_body" : "Hi [user:name],\\r\\n  Congratulations, You picture named [node:title] is published on [site:name].\\r\\n\\r\\nCheers.",
+    "mail_body_plain" : null,
+    "send_plain" : "0",
+    "from_override" : "",
+    "cc_default" : "",
+    "bcc_default" : "",
+    "recipient_callback" : "",
+    "rdf_mapping" : []
+  }');
   return $items;
 }

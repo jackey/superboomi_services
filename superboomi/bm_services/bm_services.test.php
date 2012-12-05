@@ -46,7 +46,7 @@ $base_url = 'http://yangchenglank.local/superboomi_service/';
 $api_post_picture = 'node/simple_create';
 
 $node_data = json_post($base_url. $api_post_picture, array(
-	'uid' => '1',
+	'uid' => '6',
 	'title' => 'picture'
 ), array(
 	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',

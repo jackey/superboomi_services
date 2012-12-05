@@ -219,7 +219,7 @@ function _node_resource_simple_create($args) {
 	$node->title = mb_convert_encoding($args['title'], 'UTF-8', 'auto');
 	$node->language = 'en';
 	$node->uid = $args['uid'];
-	$node->status = 1;
+	$node->status = 0; // unpublish
 	$node->comment = 2;
 
 	$node->{$field_name}[LANGUAGE_NONE][0] = $file;
@@ -304,7 +304,23 @@ function features_people_node_insert($node) {
 			array('nid' => $node->nid)
 		);
   	}
+}
 
+/**
+ * Implements hook_node_update()
+ */
+function features_people_node_update($node) {
+	$old_node = node_load($node->nid);
+	
+	// publishing.
+	if ($old_node->status == 0 && $node->status == 1) {
+		$client_user = user_load($node->uid);
+		pet_send_mail(
+			'notify_admin_when_picture_publish', 
+			array('mail' => $client_user->mail, 'uid' => $node->uid),
+			array('nid' => $node->nid)
+		);
+	}
 }
 
 function static_true() {
