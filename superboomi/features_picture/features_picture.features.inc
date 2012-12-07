@@ -85,3 +85,24 @@ function features_picture_node_info() {
   );
   return $items;
 }
+
+/**
+ * Implements hook_default_pet().
+ */
+function features_picture_default_pet() {
+  $items = array();
+  $items['notify_user_when_picture_be_liked'] = entity_import('pet', '{
+    "name" : "notify_user_when_picture_be_liked",
+    "title" : "notify_user_when_picture_be_liked",
+    "subject" : "Your Picture [node:title] Be Liked",
+    "mail_body" : "Hi ,\\r\\n\\r\\n Picture be liked.",
+    "mail_body_plain" : null,
+    "send_plain" : "0",
+    "from_override" : "",
+    "cc_default" : "",
+    "bcc_default" : "",
+    "recipient_callback" : "",
+    "rdf_mapping" : []
+  }');
+  return $items;
+}

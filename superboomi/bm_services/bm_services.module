@@ -359,6 +359,8 @@ function features_people_form_picture_node_form_alter(&$form, $form_state) {
 	);
 }
 
+
+// Ajax save node.
 function ajax_save_node($form, $form_state) {
 	$node = node_form_submit_build_node($form, $form_state);
 	$insert = empty($node->nid);
@@ -373,6 +375,21 @@ function ajax_save_node($form, $form_state) {
   	);
 
 	return array('#type' => 'ajax', '#commands' => array($command));
+}
+
+/**
+ * Implements hook_flag(). Trigger actions if any are available.
+ */
+function bm_services_flag($action, $flag, $content_id, $account) {
+	if ($action == 'flag') {
+		$mail = $account->mail;
+		$uid = $account->uid;
+		pet_send_mail(
+			'notify_user_when_picture_be_liked', 
+			array('mail' => $mail, 'uid' => $content_id),
+			array('nid' => $content_id)
+		);
+	}
 }
 
 function static_true() {
