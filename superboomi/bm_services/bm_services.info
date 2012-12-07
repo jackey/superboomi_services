@@ -9,3 +9,4 @@ dependencies[] = email_registration
 dependencies[] = features_picture
 dependencies[] = token
 dependencies[] = pet
+dependencies[] = ajax_register

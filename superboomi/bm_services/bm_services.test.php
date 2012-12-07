@@ -28,26 +28,36 @@ function json_post($url, $data, $files = array()) {
 }
 
 // Server
-//$base_url = 'http://tianzifang.cn/yangchenglank.server/yangchenglank/html/superboomi_service/';
+//$base_url = 'http://tianzifang.cn/superboomi/superboomi_service/';
 // Local
-$base_url = 'http://yangchenglank.local/superboomi_service/';
+$base_url = 'http://drupal7.local/?q=superboomi_service/';
 
 //====================================================================================================
 // $api_register = 'user/simple_register';
 
 // $register_data = json_post($base_url. $api_register, array(
-// 	'mail' => 'jziwenchen@gmail.com',
+// 	'mail' => 'jziwenchen2@gmail.com',
 // ));
 
 // print_r($register_data);
+
+//====================================================================================================
+// $api_login = 'user/login';
+
+// $login_data = json_post($base_url. $api_login, array(
+// 	'username' => 'admin', 'password' => 'admin'
+// ));
+
+// print_r($login_data);
 
 
 //====================================================================================================
 $api_post_picture = 'node/simple_create';
 
 $node_data = json_post($base_url. $api_post_picture, array(
-	'uid' => '6',
-	'title' => 'picture'
+	'uid' => '1',
+	'title' => 'picture',
+	'field_boomi_terms' => '1',
 ), array(
 	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
 ));

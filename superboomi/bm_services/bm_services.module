@@ -21,8 +21,6 @@ function bm_services_menu() {
 }
 
 function bm_services_test_page() {
-
-
 	return 'hello world';
 }
 
@@ -203,6 +201,7 @@ function _user_resource_simple_create($account) {
 // simple node create resource create.
 function _node_resource_simple_create($args) {
 	$field_name = 'field_boomi_image';
+	$term_field_name = 'field_boomi_terms';
 	$node_type = 'picture';
 
 	if (!isset($_FILES[$field_name]) && FALSE) {
@@ -219,6 +218,7 @@ function _node_resource_simple_create($args) {
 	$node->title = mb_convert_encoding($args['title'], 'UTF-8', 'auto');
 	$node->language = 'en';
 	$node->uid = $args['uid'];
+	$node->{$term_field_name}[LANGUAGE_NONE][0] = $args['field_boomi_terms'];
 	$node->status = 0; // unpublish
 	$node->comment = 2;
 
@@ -321,6 +321,35 @@ function features_people_node_update($node) {
 			array('nid' => $node->nid)
 		);
 	}
+}
+
+/**
+ * Implements hook_form_alter()
+ */
+function features_people_form_picture_node_form_alter(&$form, $form_state) {
+	$form['actions']['submit']['#ajax'] = array(
+		'event' => 'click',
+		'callback' => 'ajax_save_node',
+	);
+	$form['actions']['submit']['#attached']['js'] = array(
+		drupal_get_path('module', 'bm_services').'/bm_services.js'
+	);
+}
+
+function ajax_save_node($form, $form_state) {
+	$node = node_form_submit_build_node($form, $form_state);
+	$insert = empty($node->nid);
+	node_save($node);
+
+	// Clear the page and block caches.
+	cache_clear_all();
+
+	$command = array(
+	    'command' => 'redirect',
+	    'settings' => array('url' => url('node/' . $node->nid), array('abosulte' => TRUE)),
+  	);
+
+	return array('#type' => 'ajax', '#commands' => array($command));
 }
 
 function static_true() {
