@@ -21,6 +21,8 @@ function bm_services_menu() {
 }
 
 function bm_services_test_page() {
+	print_r(_node_resource_retrieve_list(array('field_boomi_terms' => 1)));
+
 	return 'hello world';
 }
 
@@ -110,6 +112,7 @@ function _node_resource_retrieve_list($args) {
 	$views_picture = views_get_view('user_pictures');
 	$views_picture->set_display('block');
 	$filters = $views_picture->display_handler->get_option('filters');
+
 	if (isset($args['uid']) && is_numeric($args['uid'])) {
 		$uid_filter = array(
 			'id' => 'uid',
@@ -124,6 +127,26 @@ function _node_resource_retrieve_list($args) {
 			'is_grouped' => FALSE,
 		);
 		$filters = array_merge($filters, array('uid' => $uid_filter));
+		$views_picture->display_handler->set_option('filters', $filters);
+	}
+
+	if (isset($args['field_boomi_terms']) && is_numeric($args['field_boomi_terms'])) {
+		$term_filter = array(
+			'id' => 'field_boomi_terms_tid',
+			'table' => 'field_data_field_boomi_terms',
+			'field' => 'field_boomi_terms_tid',
+			'relationship' => 'node',
+			'group_type' => 'group',
+			'operator' => 'or',
+			'value' => array($args['field_boomi_terms']),
+			'group' => 1,
+			'exposed' => FALSE,
+			'is_grouped' => FALSE,
+			'vocabulary' => 'tags',
+			'hierarchy' => 0,
+			'type' => 'select'
+		);
+		$filters = array_merge($filters, array('field_boomi_terms_tid' => $term_filter));
 		$views_picture->display_handler->set_option('filters', $filters);
 	}
 
