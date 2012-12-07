@@ -1,26 +1,24 @@
 (function ($) {
-	Drupal.behaviors.AJAX = {
+	Drupal.behaviors.bm_services = {
 		attach: function (context, settings) {
-			// var handlers = $('#edit-submit').data('events')['click'];
-			// $('edit-submit').unbind();
-			// $("#edit-submit").bind('click', function () {
-			// 	$('#edit-field-boomi-image-und-0-upload-button').trigger('click');
-			// 	$('#edit-submit').trigger('click');
-			// });
-			// $.each(handlers, function(handler) {
-			// 	$('#edit-submit').bind('click', handler);
-			// });
+			$('#bm_services_upload_picture_form').ajaxForm({
+			    beforeSend: function() {
+			    	console.log('beforeSend');
+			    },
+			    uploadProgress: function(event, position, total, percentComplete) {
+			    	// none.
+			    },
+				complete: function(xhr) {
+					console.log('complete');
+				}
+			});
 		}
 	};
 
-	$(document).ready(function () {
-
-	});
-
 })(jQuery);
 
-Drupal.ajax.prototype.commands.redirect = function (ajax, response, status) {
-	if (response['settings'].url) {
-		//window.location.href = response['settings'].url;
-	}
-}
+// Drupal.ajax.prototype.commands.redirect = function (ajax, response, status) {
+// 	if (response['settings'].url) {
+// 		//window.location.href = response['settings'].url;
+// 	}
+// }
