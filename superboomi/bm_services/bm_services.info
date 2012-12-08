@@ -4,6 +4,11 @@ package = Superboomi Services
 core = 7.x
 version = 0.0.1beta
 
+; Files
+files[] = includes/views_handler_field_node_link_publish.inc
+files[] = includes/views_handler_field_node_link_unpublish.inc
+
+; Module Dependencies
 dependencies[] = rest_server
 dependencies[] = email_registration
 dependencies[] = features_picture

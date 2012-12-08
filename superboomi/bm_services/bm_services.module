@@ -21,6 +21,49 @@ function bm_services_menu() {
 			'page callback' => 'update_user_picture',
 			'access callback' => TRUE,
 		),
+		'node/%node/publish' => array(
+			'page callback' => 'bm_services_publich_toggle_node',
+			'page arguments' => array(1, 2),
+			'access callback' => 'user_access',
+			'access arguments' => array('publish node'),
+		),
+		'node/%node/unpublish' => array(
+			'page callback' => 'bm_services_publich_toggle_node',
+			'page arguments' => array(1, 2),
+			'access callback' => 'user_access',
+			'access arguments' => array('unpublish node'),
+		),
+	);
+}
+
+/**
+ * Menu callback.
+ */
+function bm_services_publich_toggle_node($node, $action) {
+	if ($action == 'publish') {
+		$node->status = 1;
+		node_save($node);
+	}
+	else if ($action = 'unpublish') {
+		$node->status = 0;
+		node_save($node);
+	}
+
+	return 'success';
+}
+
+/**
+ * Implements hook_permission().
+ */
+function bm_services_permission() {
+	return array(
+		'publish node' => array(
+			'title' => t("Publish Node"),
+			'restrict access' => TRUE,
+		),
+		'unpublish node' => array(
+			'title' => t('Unpublish Node'),
+		),
 	);
 }
 
@@ -47,8 +90,18 @@ function update_user_picture() {
 	$edit_user->picture = $file;
 	user_save($edit_user);
 
-	print json_encode(array('hello world'));
+	print json_encode(array('user' => $edit_user, 'uri' => file_create_url($edit_user->picture->uri)));
 	die();
+}
+
+/**
+ * Iplements hook_views_api()
+ */
+function bm_services_views_api() {
+  return array(
+    'api' => 3.0,
+    'path' => drupal_get_path('module', 'bm_services') . '/includes',
+  );
 }
 
 /**

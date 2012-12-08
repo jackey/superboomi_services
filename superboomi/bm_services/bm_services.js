@@ -3,13 +3,13 @@
 		attach: function (context, settings) {
 			$('#bm_services_upload_picture_form').ajaxForm({
 			    beforeSend: function() {
-			    	console.log('beforeSend');
+			    	// none
 			    },
 			    uploadProgress: function(event, position, total, percentComplete) {
 			    	// none.
 			    },
 				complete: function(xhr) {
-					console.log('complete');
+					// none
 				}
 			});
 
@@ -22,8 +22,21 @@
 
 				},
 				complete: function(xhr) {
-					console.log('complete');
+					// none
 				}
+			});
+
+			// unpublish / publish
+			$('.views-field-unpublish a, .views-field-unpublish a').click(function () {
+				var href = $(this).attr('href');
+				$.ajax({
+					url: href,
+					success: function () {
+						// success
+					}
+				});
+
+				return false;
 			});
 		}
 	};

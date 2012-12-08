@@ -20,5 +20,5 @@ features[field][] = node-picture-field_boomi_image
 features[field][] = node-picture-field_boomi_terms
 features[flag][] = lke_picture
 features[node][] = picture
-features[pet][] = notify_user_when_picture_be_liked
 features[taxonomy][] = tags
+features[views_view][] = user_pictures
