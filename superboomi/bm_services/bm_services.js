@@ -12,6 +12,19 @@
 					console.log('complete');
 				}
 			});
+
+			//
+			$('#bm_services_ajax_submit_form').ajaxForm({
+				beforeSend: function() {
+
+				},
+				uploadProgress: function(event, position, total, percentComplete) {
+
+				},
+				complete: function(xhr) {
+					console.log('complete');
+				}
+			});
 		}
 	};
 

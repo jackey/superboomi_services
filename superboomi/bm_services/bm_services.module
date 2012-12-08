@@ -17,6 +17,10 @@ function bm_services_menu() {
 			'page callback' => 'bm_services_test_page',
 			'access callback' => TRUE,
 		),
+		'bm_services_update_user_picture' => array(
+			'page callback' => 'update_user_picture',
+			'access callback' => TRUE,
+		),
 	);
 }
 
@@ -24,6 +28,27 @@ function bm_services_test_page() {
 	print_r(_node_resource_retrieve_list(array('field_boomi_terms' => 1)));
 
 	return 'hello world';
+}
+
+// Menu callback
+function update_user_picture() {
+	$uid = $_POST['uid'];
+
+  	$validators = array(
+    	'file_validate_extensions' =>  array('jpg', 'jpeg', 'png'),
+    	'file_validate_size' => array(0 => parse_size(variable_get('user_picture_file_size', '30'))),
+  	);
+
+	// Let the file module handle the upload and moving.
+	if (!$file = file_save_upload('picture_upload', $validators, FALSE, FILE_EXISTS_RENAME) ) {  	
+		return services_error(t('Failed to upload file. @upload', array('@upload' => $field_name)), 406);
+	}
+	$edit_user = user_load($uid);
+	$edit_user->picture = $file;
+	user_save($edit_user);
+
+	print json_encode(array('hello world'));
+	die();
 }
 
 /**
@@ -277,7 +302,7 @@ function _node_resource_simple_file_save_upload($node_type, $field_name) {
   $instance = field_info_instance('node', $field_name, $node_type);
   $field = field_read_field($field_name);
 
-  $destination = file_field_widget_uri($field, $instance );
+  $destination = file_field_widget_uri($field, $instance);
   if (isset($destination) && !file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
     return services_error(t('The upload directory %directory for the file field !name could not be created or is not accessible. A newly uploaded file could not be saved in this directory as a consequence, and the upload was canceled.', array('%directory' => $destination, '!name' => $field_name)));
   }
@@ -415,6 +440,10 @@ function bm_services_theme() {
 			'variables' => array('terms' => array()),
 			'template' => 'bm_services_create_picture_form',
 		),
+		'bm_services_user_picture_form' => array(
+			'variables' => array(),
+			'template' => 'bm_services_user_picture_form',
+		),
 	);
 }
 
@@ -425,7 +454,7 @@ function bm_services_block_view($delta) {
 	if ($delta == 'bm_services_create_picture') {
 		$field = field_info_field('field_boomi_terms');
 		$terms_allowed = taxonomy_allowed_values($field);
-		drupal_add_js('misc/jquery.form.js');
+		drupal_add_js(drupal_get_path('module', 'jquery_update').'/replace/misc/jquery.form.js');
 		drupal_add_js(drupal_get_path('module', 'bm_services').'/bm_services.js');
 		return array(
 			'subject' => NULL,
@@ -433,9 +462,11 @@ function bm_services_block_view($delta) {
 		);
 	}
 	else if ($delta == 'bm_services_user_picture') {
+		drupal_add_js(drupal_get_path('module', 'jquery_update').'/replace/misc/jquery.form.js');
+		drupal_add_js(drupal_get_path('module', 'bm_services').'/bm_services.js');
 		return array(
 			'subject' => NULL,
-			'content' => 'hello, user picture',
+			'content' => theme('bm_services_user_picture_form'),
 		);
 	}
 }
