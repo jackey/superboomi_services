@@ -84,7 +84,7 @@ function update_user_picture() {
 
 	// Let the file module handle the upload and moving.
 	if (!$file = file_save_upload('picture_upload', $validators, FALSE, FILE_EXISTS_RENAME) ) {  	
-		return services_error(t('Failed to upload file. @upload', array('@upload' => $field_name)), 406);
+		return bm_services_error(t('Failed to upload file. @upload', array('@upload' => $field_name)), 406);
 	}
 	$edit_user = user_load($uid);
 	$edit_user->picture = $file;
@@ -102,6 +102,10 @@ function bm_services_views_api() {
     'api' => 3.0,
     'path' => drupal_get_path('module', 'bm_services') . '/includes',
   );
+}
+
+function bm_services_error($message, $code = '500') {
+	return array('error' => $message, 'code' => $code);
 }
 
 /**
@@ -288,7 +292,7 @@ function _user_resource_simple_create($account) {
 
   // Error if needed.
   if ($errors = form_get_errors()) {
-    return services_error(implode(" ", $errors), 406, array('form_errors' => $errors));
+    return bm_services_error(implode(" ", $errors), 406, array('form_errors' => $errors));
   }
   else {
     $user = array('uid' => $form_state['user']->uid);
@@ -306,7 +310,7 @@ function _node_resource_simple_create($args) {
 	$node_type = 'picture';
 
 	if (!isset($_FILES[$field_name]) && FALSE) {
-		return services_error(t('Boomi image should not empty'), 500);
+		return bm_services_error(t('Boomi image should not empty'), 500);
 	}
 	else {
 		list($files, $file_objs) = _node_resource_simple_file_save_upload($node_type, $field_name);
@@ -330,7 +334,7 @@ function _node_resource_simple_create($args) {
 		$ret = node_save($node);
 	}
 	catch (Exception $e) {
-		return services_error(t("Upload picture error"));
+		return bm_services_error(t("Upload picture error"));
 	}
 	return array('nid' => $node->nid, 'uri' => $node->{$field_name}[LANGUAGE_NONE][0]['uri']);
 }
@@ -357,7 +361,7 @@ function _node_resource_simple_file_save_upload($node_type, $field_name) {
 
   $destination = file_field_widget_uri($field, $instance);
   if (isset($destination) && !file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
-    return services_error(t('The upload directory %directory for the file field !name could not be created or is not accessible. A newly uploaded file could not be saved in this directory as a consequence, and the upload was canceled.', array('%directory' => $destination, '!name' => $field_name)));
+    return bm_services_error(t('The upload directory %directory for the file field !name could not be created or is not accessible. A newly uploaded file could not be saved in this directory as a consequence, and the upload was canceled.', array('%directory' => $destination, '!name' => $field_name)));
   }
 
   $validators = array(
@@ -369,7 +373,7 @@ function _node_resource_simple_file_save_upload($node_type, $field_name) {
 
   // Let the file module handle the upload and moving.
   if (!$file = file_save_upload($field_name, $validators, $destination, FILE_EXISTS_RENAME) ) {  	
-    return services_error(t('Failed to upload file. @upload', array('@upload' => $field_name)), 406);
+    return bm_services_error(t('Failed to upload file. @upload', array('@upload' => $field_name)), 406);
   }
 
   if ($file->fid) {
@@ -381,7 +385,7 @@ function _node_resource_simple_file_save_upload($node_type, $field_name) {
     $file_objs[] = $file;
   }
   else {
-    return services_error(t('An unknown error occurred'), 500);
+    return bm_services_error(t('An unknown error occurred'), 500);
   }
 
   return array($files, $file_objs);
