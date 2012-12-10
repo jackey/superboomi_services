@@ -129,6 +129,20 @@ function bm_services_services_resources() {
 						)
 					),
 				),
+				'simple_login' => array(
+					'help' => t('Simple User Login'),
+					'callback' => '_user_resource_simple_login',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'mail',
+							'type' => 'string',
+							'description' => 'The register user mail address',
+							'optional' => FALSE,
+							'source' => 'data'
+						)
+					),
+				),
 			),
 		),
 		'node' => array(
@@ -186,6 +200,22 @@ function bm_services_services_resources() {
 	);
 
 	return $definitions;
+}
+
+/**
+ * Get account by email.
+ */
+function _user_resource_simple_login($args) {
+	$mail = $args['mail'];
+	$query = db_query("SELECT * FROM {users} u where u.mail = :mail", array(':mail' => $mail));
+	$uid = 0;
+	foreach ($query as $row) {
+		$uid = $row->uid;
+	}
+	if ($uid == 0) {
+		return bm_services_error("user not found", 500);
+	}
+	return array('user' => user_load($uid));
 }
 
 // Retrieve pictures list.
