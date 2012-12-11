@@ -325,7 +325,7 @@ function _user_resource_simple_create($account) {
   	$mail = $account['mail'];
   	$registered_account = user_load_by_mail($mail);
     $error = bm_services_error(implode(" ", $errors), 406, array('form_errors' => $errors));
-    $error['registered_account'] = $registered_account;
+    $error['uid'] = $registered_account->uid;
     return $error;
   }
   else {
