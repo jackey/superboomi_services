@@ -33,13 +33,13 @@ function json_post($url, $data, $files = array()) {
 $base_url = 'http://drupal7.local/?q=superboomi_service/';
 
 //====================================================================================================
-// $api_register = 'user/simple_register';
+$api_register = 'user/simple_register';
 
-// $register_data = json_post($base_url. $api_register, array(
-// 	'mail' => 'jziwenchen2@gmail.com',
-// ));
+$register_data = json_post($base_url. $api_register, array(
+	'mail' => 'jziwenchen@gmail.com',
+));
 
-// print_r($register_data);
+print_r($register_data);
 
 //====================================================================================================
 // $api_login = 'user/login';
@@ -52,17 +52,17 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 
 
 //====================================================================================================
-$api_post_picture = 'node/simple_create';
+// $api_post_picture = 'node/simple_create';
 
-$node_data = json_post($base_url. $api_post_picture, array(
-	'uid' => '1',
-	'title' => 'picture',
-	'field_boomi_terms' => '1',
-), array(
-	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
-));
+// $node_data = json_post($base_url. $api_post_picture, array(
+// 	'uid' => '1',
+// 	'title' => 'picture',
+// 	'field_boomi_terms' => '1',
+// ), array(
+// 	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
+// ));
 
-print_r($node_data);
+// print_r($node_data);
 
 //====================================================================================================
 // $api_retrieve = "node/simple_retrieve";
@@ -70,3 +70,12 @@ print_r($node_data);
 // $pictures_data = json_post($base_url. $api_retrieve, array());
 
 // print_r($pictures_data);
+
+//====================================================================================================
+// $api_login = 'user/simple_login';
+
+// $login_data = json_post($base_url. $api_login, array(
+// 	'mail' => 'jziwenchen@gmail.com',
+// ));
+
+// print_r($login_data);
