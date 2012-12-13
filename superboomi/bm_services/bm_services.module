@@ -157,6 +157,20 @@ function bm_services_services_resources() {
 						),
 					),
 				),
+				'simple_lostpassword' => array(
+					'help' => t('User Lost Password'),
+					'callback' => '_user_resource_simple_lostpassword',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'mail',
+							'type' => 'string',
+							'description' => 'The email of account',
+							'source' => 'data',
+							'optional' => FALSE
+						),
+					),
+				),
 			),
 		),
 		'node' => array(
@@ -214,6 +228,25 @@ function bm_services_services_resources() {
 	);
 
 	return $definitions;
+}
+
+// lost password.
+function _user_resource_simple_lostpassword($args) {
+	$mail = $args['mail'];
+	$account = user_load_by_mail($mail);
+	if (!$account) {
+		return bm_services_error(t("Email wrong"), 500);
+	}
+	else {
+		// Mail one time login URL and instructions using current language.
+		$mail_ret = _user_mail_notify('password_reset', $account);
+		if ($mail_ret) {
+			return array('mailed' => 1);
+		}
+		else {
+			return array('mailed' => 0)
+		}
+	}
 }
 
 // simple create account. no email
