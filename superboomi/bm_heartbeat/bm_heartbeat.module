@@ -28,9 +28,9 @@ function bm_heartbeat_flag($action, $flag, $content_id, $account)  {
     if ($action == 'flag' && $flag->name == 'lke_picture') {
         $node = node_load($content_id);
         $node_user = user_load($node->uid);
-        heartbeat_api_log('heartbeat_tweet', $account->uid, 0, $content_id, 0, array(
+        heartbeat_api_log('heartbeat_tweet', $account->uid, $node_user->uid,0, $content_id, array(
             '!message' => 'flag content',
-            '!username'=> l($node_user->name, 'user/'. $node->uid)
+            '!username'=> l($account->name, 'user/'. $account->uid)
         ), HEARTBEAT_PUBLIC_TO_ALL, time());
     }
 }
