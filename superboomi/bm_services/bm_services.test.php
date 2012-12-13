@@ -83,19 +83,19 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 // print_r($login_data);
 
 //====================================================================================================
-// $api_user_create = 'user/simple_create';
+$api_user_create = 'user/simple_create';
 
-// $login_data = json_post($base_url. $api_user_create, array(
-// 	'account' => array('mail' => 'jziwenchen13@gmail.com','name' => 'admin1111', 'pass' => 'admin'),
-// ));
-
-// print_r($login_data);
-
-//====================================================================================================
-$api_user_lostpassword = 'user/simple_lostpassword';
-
-$user_lostpassword_data = json_post($base_url. $api_user_lostpassword, array(
-	'mail' => 'jziwenchen@gmail.com'
+$login_data = json_post($base_url. $api_user_create, array(
+	'mail' => 'jziwenchen14@gmail.com','name' => 'admin1111', 'pass' => 'admin'
 ));
 
-print_r($user_lostpassword_data);
+print_r($login_data);
+
+//====================================================================================================
+// $api_user_lostpassword = 'user/simple_lostpassword';
+
+// $user_lostpassword_data = json_post($base_url. $api_user_lostpassword, array(
+// 	'mail' => 'jziwenchen@gmail.com'
+// ));
+
+// print_r($user_lostpassword_data);

@@ -149,9 +149,23 @@ function bm_services_services_resources() {
 					'access callback' => 'static_true',
 					'args' => array(
 						array(
-							'name' => 'account',
-							'type' => 'array',
-							'description' => 'The user object',
+							'name' => 'name',
+							'type' => 'string',
+							'description' => 'The user name',
+							'source' => 'data',
+							'optional' => FALSE,
+						),
+						array(
+							'name' => 'pass',
+							'type' => 'string',
+							'description' => 'The user password',
+							'source' => 'data',
+							'optional' => FALSE,
+						),
+						array(
+							'name' => 'mail',
+							'type' => 'string',
+							'description' => 'The user mail',
 							'source' => 'data',
 							'optional' => FALSE,
 						),
@@ -251,10 +265,9 @@ function _user_resource_simple_lostpassword($args) {
 
 // simple create account. no email
 function _user_resource_simple_create_account($args) {
-	$account = $args['account'];
-	$user_name = $account['name'];
-	$pass = $account['pass'];
-	$mail = $account['mail'];
+	$user_name = $args['name'];
+	$pass = $args['pass'];
+	$mail = $args['mail'];
 	$new_account = new stdClass;
 	$new_account->mail = $mail;
 	$new_account->init = $mail;
