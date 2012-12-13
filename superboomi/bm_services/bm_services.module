@@ -143,6 +143,20 @@ function bm_services_services_resources() {
 						)
 					),
 				),
+				'simple_create' => array(
+					'help' => t('Simple User Create'),
+					'callback' => '_user_resource_simple_create_account',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'account',
+							'type' => 'array',
+							'description' => 'The user object',
+							'source' => 'data',
+							'optional' => FALSE,
+						),
+					),
+				),
 			),
 		),
 		'node' => array(
@@ -200,6 +214,31 @@ function bm_services_services_resources() {
 	);
 
 	return $definitions;
+}
+
+// simple create account. no email
+function _user_resource_simple_create_account($args) {
+	$account = $args['account'];
+	$user_name = $account['name'];
+	$pass = $account['pass'];
+	$mail = $account['mail'];
+	$new_account = new stdClass;
+	$new_account->mail = $mail;
+	$new_account->init = $mail;
+	$new_account->name = $user_name;
+	$new_account->pass = $pass;
+	$new_account->status = 1;
+	$new_account->access = REQUEST_TIME;
+	$new_account->roles = array();
+	$new_account->roles[2] = 'authenticated user';
+	try {
+		$account = user_save(NULL, (array)$new_account);
+		return $account;
+	}
+	catch (Exception $e) {
+		return bm_services_error($e->getMessage(), 500);
+	}
+
 }
 
 /**

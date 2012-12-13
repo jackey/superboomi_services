@@ -29,17 +29,19 @@ function json_post($url, $data, $files = array()) {
 
 // Server
 //$base_url = 'http://tianzifang.cn/superboomi/superboomi_service/';
+// test server
+//$base_url = 'http://uhz002566.chinaw3.com/superboomi_service/';
 // Local
 $base_url = 'http://drupal7.local/?q=superboomi_service/';
 
 //====================================================================================================
-$api_register = 'user/simple_register';
+// $api_register = 'user/simple_register';
 
-$register_data = json_post($base_url. $api_register, array(
-	'mail' => 'jziwenchen@gmail.com',
-));
+// $register_data = json_post($base_url. $api_register, array(
+// 	'mail' => 'jziwenchen@gmail.com',
+// ));
 
-print_r($register_data);
+// print_r($register_data);
 
 //====================================================================================================
 // $api_login = 'user/login';
@@ -79,3 +81,12 @@ print_r($register_data);
 // ));
 
 // print_r($login_data);
+
+//====================================================================================================
+$api_user_create = 'user/simple_create';
+
+$login_data = json_post($base_url. $api_user_create, array(
+	'account' => array('mail' => 'jziwenchen13@gmail.com','name' => 'admin1111', 'pass' => 'admin'),
+));
+
+print_r($login_data);
