@@ -185,6 +185,27 @@ function bm_services_services_resources() {
 						),
 					),
 				),
+				'simple_update' => array(
+					'help' => t('User Update'),
+					'callback' => '_user_resource_simple_update_pass',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'uid',
+							'type' => 'int',
+							'description' => '.',
+							'source' => 'data',
+							'optional' => FALSE
+						),
+						array(
+							'name' => 'pass',
+							'type' => 'string',
+							'description' => '.',
+							'source' => 'data',
+							'optional' => FALSE,
+						),
+					),
+				),
 			),
 		),
 		'node' => array(
@@ -242,6 +263,76 @@ function bm_services_services_resources() {
 	);
 
 	return $definitions;
+}
+
+function _user_resource_simple_update_pass($args) {
+	$uid = $args['uid'];
+	$pass = $args['pass'];
+	$account = array('pass' => $pass);
+	// Adds backwards compatability with regression fixed in #1083242
+	$account = _services_arg_value($account, 'data');
+
+	$account['uid'] = $uid;
+
+	$account_loaded = user_load($uid);
+
+	// Load the required includes for saving profile information
+	// with drupal_form_submit().
+	module_load_include('inc', 'user', 'user.pages');
+
+	// If a profile category was passed in, use it. Otherwise default
+	// to 'account' (for saving core user data.)
+	$category = 'account';
+	if (isset($account['category'])) {
+		$category = $account['category'];
+		unset($account['category']);
+	}
+
+	// Drop any passed in values into the $account var. Anything
+	// unused by the form just gets ignored. We handle roles and
+	// password separately.
+	foreach ($account as $key => $value) {
+		if ($key != 'pass' && $key != 'roles') {
+			$form_state['values'][$key] = $value;
+		}
+	}
+
+	// Prepare values of roles.
+	if (!isset($account['roles'])) {
+		$account['roles'] = $account_loaded->roles;
+	}
+	foreach ($account['roles'] as $key => $value) {
+		if (!empty($value)) {
+			$form_state['values']['roles'][$key] = $key;
+		}
+	}
+	unset($form_state['values']['roles'][2]);
+
+	// Prepare values for password.
+	if (isset($account['pass'])) {
+		$form_state['values']['pass']['pass1'] = $account['pass'];
+		$form_state['values']['pass']['pass2'] = $account['pass'];
+	}
+
+	// If user is changing name, make sure they have permission.
+	if (isset($account['name']) && $account['name'] != $account_loaded->name && !user_access('change own username')) {
+		return services_error(t('You are not allowed to change your username.'), 406);
+	}
+
+	$form_state['values']['op'] = variable_get('services_user_save_button_resource_update', t('Save'));
+	$form_state['values']['#user_category'] = $category;
+	$form_state['values']['#account'] = $account_loaded;
+
+	$ret = drupal_form_submit('user_profile_form', $form_state, $account_loaded, $category);
+
+	// Error if needed.
+	if ($errors = form_get_errors()) {
+		return services_error(implode(" ", $errors), 406, array('form_errors' => $errors));
+	}
+	else {
+		services_remove_user_data($account);
+		return $account;
+	}
 }
 
 // lost password.
@@ -619,6 +710,10 @@ function bm_services_theme() {
 		'bm_services_user_picture_form' => array(
 			'variables' => array(),
 			'template' => 'bm_services_user_picture_form',
+		),
+		'bm_services_use_update_pass' => array(
+			'variables' => array(),
+			'template' => 'bm_services_use_update_pass',
 		),
 	);
 }

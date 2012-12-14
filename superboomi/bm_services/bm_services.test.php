@@ -30,7 +30,10 @@ function json_post($url, $data, $files = array()) {
 // Server
 //$base_url = 'http://tianzifang.cn/superboomi/superboomi_service/';
 // test server
-//$base_url = 'http://uhz002566.chinaw3.com/superboomi_service/';
+//superboomi_service/user/simple_register
+//$base_url = 'http://hmu064240.chinaw3.com/superboomi_service/';
+//production
+//$base_url = 'http://www.superboomi.com/';
 // Local
 $base_url = 'http://drupal7.local/?q=superboomi_service/';
 
@@ -38,7 +41,7 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 // $api_register = 'user/simple_register';
 
 // $register_data = json_post($base_url. $api_register, array(
-// 	'mail' => 'jziwenchen@gmail.com',
+// 	'mail' => 'jziwenchen1@gmail.com',
 // ));
 
 // print_r($register_data);
@@ -83,13 +86,13 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 // print_r($login_data);
 
 //====================================================================================================
-$api_user_create = 'user/simple_create';
+// $api_user_create = 'user/simple_create';
 
-$login_data = json_post($base_url. $api_user_create, array(
-	'mail' => 'jziwenchen14@gmail.com','name' => 'admin1111', 'pass' => 'admin'
-));
+// $login_data = json_post($base_url. $api_user_create, array(
+// 	'mail' => 'jziwenchen14@gmail.com','name' => 'admin1111', 'pass' => 'admin'
+// ));
 
-print_r($login_data);
+// print_r($login_data);
 
 //====================================================================================================
 // $api_user_lostpassword = 'user/simple_lostpassword';
@@ -99,3 +102,10 @@ print_r($login_data);
 // ));
 
 // print_r($user_lostpassword_data);
+
+$api_user_update = 'user/simple_update';
+$api_user_update_data = json_post($base_url.$api_user_update, array(
+	'pass' => 'adminadmin', 'uid' => 1
+));
+
+print_r($api_user_update_data);
