@@ -515,6 +515,11 @@ function _user_resource_simple_create($account) {
 
 // simple node create resource create.
 function _node_resource_simple_create($args) {
+	$width = @$args['width'];
+	$height = @$args['height'];
+	$x = @$args['x'];
+	$y = @$args['y'];
+
 	$field_name = 'field_boomi_image';
 	$term_field_name = 'field_boomi_terms';
 	$node_type = 'picture';
@@ -527,6 +532,10 @@ function _node_resource_simple_create($args) {
 	}
 	$file = $files[0];
 
+	$path = drupal_realpath($file['uri']);
+	if ($width && $height && $x && $y) {
+		crop_picture($path, $x = 50, $y = 50, $width = 200, $height = 200)
+	}
 	$node = (Object)null;
 	$node->type = $node_type;
 	node_object_prepare($node);
@@ -746,3 +755,35 @@ function static_true() {
 	return TRUE;
 }
 
+/**
+ * Crop image.
+ */
+function crop_picture($path, $x = 50, $y = 50, $width = 200, $height = 200) {
+	$info = getimagesize($path);
+
+	switch($info['mime']) {
+		case "image/gif":
+			$source = imagecreatefromgif($path);
+			$out_image = 'imagegif';
+			break;
+		case "image/jpeg":
+			$source = imagecreatefromjpeg($path);
+			$out_image = 'imagejpeg';
+			break;
+		case "image/png":
+			$source = imagecreatefrompng($path);
+			$out_image = 'imagepng';
+			break;
+	}
+
+	$sizes = getimagesize($path);
+	$source_width = $sizes[0];
+	$source_height = $sizes[1];
+
+	$new_image = imagecreatetruecolor($width, $height);
+	imagecopyresampled($new_image, $source, $x, $y, 0, 0, $width, $height, $source_width, $source_height);
+	$out_image($new_image, $path, 90);
+
+	imagedestroy($source);
+	imagedestroy($new_image);
+}

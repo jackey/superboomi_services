@@ -57,17 +57,17 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 
 
 //====================================================================================================
-// $api_post_picture = 'node/simple_create';
+$api_post_picture = 'node/simple_create';
 
-// $node_data = json_post($base_url. $api_post_picture, array(
-// 	'uid' => '1',
-// 	'title' => 'picture',
-// 	'field_boomi_terms' => '1',
-// ), array(
-// 	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
-// ));
+$node_data = json_post($base_url. $api_post_picture, array(
+	'uid' => '1',
+	'title' => 'picture',
+	'field_boomi_terms' => '1',
+), array(
+	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
+));
 
-// print_r($node_data);
+print_r($node_data);
 
 //====================================================================================================
 // $api_retrieve = "node/simple_retrieve";
@@ -103,9 +103,9 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 
 // print_r($user_lostpassword_data);
 
-$api_user_update = 'user/simple_update';
-$api_user_update_data = json_post($base_url.$api_user_update, array(
-	'pass' => 'adminadmin', 'uid' => 1
-));
+// $api_user_update = 'user/simple_update';
+// $api_user_update_data = json_post($base_url.$api_user_update, array(
+// 	'pass' => 'adminadmin', 'uid' => 10
+// ));
 
-print_r($api_user_update_data);
+// print_r($api_user_update_data);
