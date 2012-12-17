@@ -532,9 +532,8 @@ function _node_resource_simple_create($args) {
 	}
 	$file = $files[0];
 
-	$path = drupal_realpath($file['uri']);
 	if ($width && $height && $x && $y) {
-		crop_picture($path, $x = 50, $y = 50, $width = 200, $height = 200);
+		crop_picture($file['path'], $x = 50, $y = 50, $width = 200, $height = 200);
 	}
 	$node = (Object)null;
 	$node->type = $node_type;
@@ -600,6 +599,7 @@ function _node_resource_simple_file_save_upload($node_type, $field_name) {
     $files[] = array(
       'fid' => $file->fid,
       'uri' => services_resource_uri(array('file', $file->fid)),
+      'path' => drupal_realpath($file->uri)
     );
     $file_objs[] = $file;
   }
