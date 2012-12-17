@@ -534,7 +534,7 @@ function _node_resource_simple_create($args) {
 
 	$path = drupal_realpath($file['uri']);
 	if ($width && $height && $x && $y) {
-		crop_picture($path, $x = 50, $y = 50, $width = 200, $height = 200)
+		crop_picture($path, $x = 50, $y = 50, $width = 200, $height = 200);
 	}
 	$node = (Object)null;
 	$node->type = $node_type;

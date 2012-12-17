@@ -63,6 +63,10 @@ $node_data = json_post($base_url. $api_post_picture, array(
 	'uid' => '1',
 	'title' => 'picture',
 	'field_boomi_terms' => '1',
+	'width' => '200',
+	'height' => '200',
+	'x' => '60',
+	'y' => '60'
 ), array(
 	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
 ));
