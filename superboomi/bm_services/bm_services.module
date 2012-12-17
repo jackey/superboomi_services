@@ -775,7 +775,9 @@ function crop_picture($path, $x = 50, $y = 50, $width = 200, $height = 200) {
 			$out_image = 'imagepng';
 			break;
 	}
-
+	if (!$out_image) {
+		return FALSE;
+	}
 	$sizes = getimagesize($path);
 	$source_width = $sizes[0];
 	$source_height = $sizes[1];
