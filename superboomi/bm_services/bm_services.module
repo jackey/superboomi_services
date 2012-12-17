@@ -532,7 +532,7 @@ function _node_resource_simple_create($args) {
 	}
 	$file = $files[0];
 
-	if ($width && $height && $x && $y) {
+	if ($width && $height && isset($x) && isset($y)) {
 		crop_picture($file['path'], $x = 50, $y = 50, $width = 200, $height = 200);
 	}
 	$node = (Object)null;
