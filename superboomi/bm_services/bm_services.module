@@ -783,7 +783,7 @@ function crop_picture($path, $x = 50, $y = 50, $width = 200, $height = 200) {
 	$source_height = $sizes[1];
 
 	$new_image = imagecreatetruecolor($width, $height);
-	imagecopyresampled($new_image, $source, $x, $y, 0, 0, $width, $height, $source_width, $source_height);
+	imagecopy($new_image, $source, 0, 0, $x, $y, $width, $height);
 	$out_image($new_image, $path, 90);
 
 	imagedestroy($source);
