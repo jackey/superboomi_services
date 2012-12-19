@@ -230,6 +230,20 @@ function bm_services_services_resources() {
 						),
 					),
 				),
+				'simple_crop' => array(
+					'help' => t('Simple Crop Picture'),
+					'callback' => '_node_resource_simple_crop',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'nid',
+							'type' => 'int',
+							'required' => TRUE,
+							'description' => 'The nid of post picture',
+							'source' => 'data'
+						),
+					),
+				),
 				'simple_retrieve' => array(
 					'help' => t('Simple fetch list of pictures'),
 					'callback' => '_node_resource_retrieve_list',
@@ -263,6 +277,24 @@ function bm_services_services_resources() {
 	);
 
 	return $definitions;
+}
+
+// resource handler: crop image of node
+function _node_resource_simple_crop($args) {
+	$nid = $args['nid'];
+	$width = @$args['width'];
+	$height = @$args['height'];
+	$x = @$args['x'];
+	$y = @$args['y'];
+
+	$field_name = 'field_boomi_image';
+	$node = node_load($nid);
+	$path = drupal_realpath($node->{$field_name}[LANGUAGE_NONE][0]['uri']);
+
+	if ($width && $height && isset($x) && isset($y)) {
+		crop_picture($path, $x, $y, $width, $height);
+	}
+	return $path;
 }
 
 function _user_resource_simple_update_pass($args) {
@@ -533,7 +565,7 @@ function _node_resource_simple_create($args) {
 	$file = $files[0];
 
 	if ($width && $height && isset($x) && isset($y)) {
-		crop_picture($file['path'], $x = 50, $y = 50, $width = 200, $height = 200);
+		//crop_picture($file['path'], $x = 50, $y = 50, $width = 200, $height = 200);
 	}
 	$node = (Object)null;
 	$node->type = $node_type;
