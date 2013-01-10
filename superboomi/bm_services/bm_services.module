@@ -715,13 +715,13 @@ function ajax_save_node($form, $form_state) {
  */
 function bm_services_flag($action, $flag, $content_id, $account) {
 	if ($action == 'flag') {
-		$mail = $account->mail;
-		$uid = $account->uid;
-		pet_send_mail(
-			'notify_user_when_picture_be_liked', 
-			array('mail' => $mail, 'uid' => $content_id),
-			array('nid' => $content_id)
-		);
+		// $mail = $account->mail;
+		// $uid = $account->uid;
+		// pet_send_mail(
+		// 	'notify_user_when_picture_be_liked', 
+		// 	array('mail' => $mail, 'uid' => $content_id),
+		// 	array('nid' => $content_id)
+		// );
 	}
 }
 
