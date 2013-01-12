@@ -54,7 +54,7 @@ function bm_cron_cron() {
 	// Just for testing.
 	//$timestamp_before_week = 0;
 
-	$history_flags = get_user_flags_history($timestamp_before_week);
+	$history_flags = get_user_array_of_flags_history($timestamp_before_week);
 	$header = array(
 		array('data' => t('Picture name')),
 		array('data' => t('Users that like')),
@@ -96,7 +96,7 @@ function get_user_flags_history($start_timestamp) {
 
 	// Then get the contents that with flags count happend last week.
 	$rows = db_query("SELECT content_id, group_concat(uid) as uids
-		from {flag_content} 
+		from {flag_content}
 		where content_type = 'node'
 			and `timestamp` > :timestamp
 			and fid = :fid 
@@ -112,7 +112,36 @@ function get_user_flags_history($start_timestamp) {
 			'content' => $node,
 			'flaged_users' => user_load_multiple($uids),
 		);
-	}
+	}	
 
 	return $users_flag_statistis;
+}
+
+
+function get_user_array_of_flags_history($start_timestamp) {
+	// First, get fid from name
+	$row = db_select("flags", 'f')->fields('f')->condition('f.name', 'lke_picture')->execute()->fetchAssoc();
+	if ($row) {
+		$fid = $row['fid'];
+	}
+	else {
+		return array();
+	}
+
+	// Then get the contents that with flags count happend last week.
+	$rows = db_query("SELECT content_id, group_concat(uid) as uids
+		from {flag_content}
+		where content_type = 'node'
+			and `timestamp` > :timestamp
+			and fid = :fid 
+		group by content_id", array(':timestamp' => intval($start_timestamp), ':fid' => $fid));
+
+
+	$uids = array();
+	while ($row = $rows->fetchAssoc()) {
+		$uids += explode(',', $row['uids']);
+	}
+	$values = array_flip($uids);
+
+	return array_keys($values);
 }
