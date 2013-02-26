@@ -17,7 +17,18 @@ function bm_services_menu() {
 			'page callback' => 'bm_services_test_page',
 			'access callback' => TRUE,
 		),
+		'node/%node/comment' => array(
+			'title' => 'Comment',
+			'access arguments' => array('comment picture'),
+			'page callback' => 'bm_services_comment_picture_form',
+			'page arguments' => array(1),
+			'type' => MENU_LOCAL_TASK
+		),
 	);
+}
+
+// Comment form
+function bm_services_comment_picture_form($node) {
 }
 
 function bm_services_test_page() {
@@ -290,3 +301,165 @@ function static_true() {
 	return TRUE;
 }
 
+/**
+ * Implements hook_node_form_alter().
+ */
+function bm_services_form_alter(&$form, &$form_state, $form_id) {
+	if ($form_id == 'picture_node_form') {
+		drupal_add_js(drupal_get_path('module', 'bm_services').'/file_rotate_image.js');
+		//$image_filed_form = &$form[''][LANGUAGE_NONE][0];
+		// $form['rotate_image'] = array(
+		// 	'#type' => 'select',
+		// 	'#title' => t('Degress'),
+		// 	'#options' => drupal_map_assoc(array('90', '180', 270, 360)),
+		// 	'#default_value' => 360,
+		// 	'#multiple' => FALSE,
+		// 	'#ajax' => array(
+		// 		'callback' => 'ajax_callback_bm_services_rotate_image',
+		// 		'event' => 'change',
+		// 	),
+		// );
+
+		$form['rotate_image_left'] = array(
+			'#type' => 'button',
+			'#value' => t('Left'),
+			'#ajax' => array(
+				'callback' => 'ajax_callback_bm_services_rotate_image_left',
+				'event' => 'click'
+			),
+		);
+		$form['rotate_image_right'] = array(
+			'#type' => 'button',
+			'#value' => t('Right'),
+			'#ajax' => array(
+				'callback' => 'ajax_callback_bm_services_rotate_image_right',
+				'event' => 'click'
+			),
+		);
+		$form['rotate_image_left_value'] = array(
+			'#type' => 'hidden',
+			'#default_value' => 0,
+		);
+		$form['rotate_image_right_value'] = array(
+			'#type' => 'hidden',
+			'#default_value' => 0,
+		);
+
+		if (isset($form_state['values']['rotate_image']) && $form_state['values']['rotate_image'] != 0) {
+			$new_file = bm_services_rotate_image((object)$form['field_boomi_image'][LANGUAGE_NONE][0]['#default_value'], $form_state['values']['rotate_image']);
+			$form_state['location_rotate_image'] = $new_file;
+		}
+		if (isset($form_state['values']['op']) && $form_state['values']['op'] == 'Left') {
+			$left = $form_state['values']['rotate_image_left_value'];
+			$right = $form_state['values']['rotate_image_right_value'];
+			$degree = ($left - $right + 1) * 90;
+			$new_file = bm_services_rotate_image((object)$form['field_boomi_image'][LANGUAGE_NONE][0]['#default_value'], $degree);
+			$form_state['location_rotate_image'] = $new_file;
+		}
+		if (isset($form_state['values']['op']) && $form_state['values']['op'] == 'Right') {
+			$left = $form_state['values']['rotate_image_left_value'];
+			$right = $form_state['values']['rotate_image_right_value'];
+			$degree = ($left - $right - 1) * 90;
+			$new_file = bm_services_rotate_image((object)$form['field_boomi_image'][LANGUAGE_NONE][0]['#default_value'], $degree);
+			$form_state['location_rotate_image'] = $new_file;
+		}
+
+		$form['#submit'][] = 'bm_services_rotate_handler';
+	}
+}
+
+// Handler for rotate image
+function bm_services_rotate_handler($form, $form_state) {
+	// Source uri
+	$degree = 
+		($form_state['values']['rotate_image_right_value'] - $form_state['values']['rotate_image_left_value']) * 90;
+	$uri = file_load($form_state['values']['field_boomi_image'][LANGUAGE_NONE][0]['fid'])->uri;
+	$image = image_load(drupal_realpath($uri));
+	image_rotate($image, $degree);
+	image_save($image);
+
+	// Clean image style for this uri.
+	image_path_flush($uri);
+}
+
+function ajax_callback_bm_services_rotate_image(&$form, &$form_state) {
+	$command = array(
+	    'command' => 'rotateImage',
+	    'settings' => array(
+	    	'url' => file_create_url($form_state['location_rotate_image']), 
+	    	'selector' => '.field-name-field-boomi-image .image-preview img'),
+  	);
+	return array('#type' => 'ajax', '#commands' => array($command));
+}
+
+function ajax_callback_bm_services_rotate_image_left(&$form, &$form_state) {
+	$command = array(
+	    'command' => 'rotateImageAction',
+	    'settings' => array(
+	    	'url' => file_create_url($form_state['location_rotate_image']), 
+	    	'selector' => '.field-name-field-boomi-image .image-preview img',
+	    	'op' => $form_state['values']['op']),
+  	);
+	return array('#type' => 'ajax', '#commands' => array($command));
+}
+
+function ajax_callback_bm_services_rotate_image_right(&$form, &$form_state) {
+	$command = array(
+	    'command' => 'rotateImageAction',
+	    'settings' => array(
+	    	'url' => file_create_url($form_state['location_rotate_image']), 
+	    	'selector' => '.field-name-field-boomi-image .image-preview img',
+	    	'op' => $form_state['values']['op']),
+  	);
+	return array('#type' => 'ajax', '#commands' => array($command));
+}
+
+function bm_services_rotate_image($file, $degree = 90) {
+	$directory = 'public://rotate_image';
+	// file_prepare_directory($directory);
+	$destination = $directory.'rotate_image_'.uniqid();
+	file_copy($file, $destination, FILE_EXISTS_REPLACE);
+
+	$image = image_load(drupal_realpath($destination));
+	image_rotate($image, $degree);
+	image_save($image);
+
+	return $destination;
+}
+
+/**
+ * Implements hook_comment_insert().
+ */
+function bm_services_comment_insert($comment) {
+	$comment_creater = user_load($comment->uid);
+	$admin = user_load(1);
+	$node = node_load($comment->nid);
+	$node_creater = user_load($node->uid);
+
+	if ($comment_creater->uid == 1) {
+		$receiver = $node_creater->mail;
+		$poster = $comment_creater->uid;
+	}
+	else {
+		$receiver = $admin->uid;
+		$poster = $node_creater->uid;
+	}
+
+	global $language;
+	drupal_mail('bm_services', 
+		'user_post_comment', 
+		$receiver, 
+		$language->language, 
+		array(), 
+		$poster);
+}
+
+/**
+ * Implements hook_mail()
+ */
+function bm_services_mail($key, &$message, $params) {
+	if ($key == 'user_post_comment') {
+		$message['subject'] = 'post comment';
+		$message['body'][] = 'html post comment';
+	}
+}
