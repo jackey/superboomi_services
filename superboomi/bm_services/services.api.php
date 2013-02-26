@@ -1,3 +1,6 @@
+base url: 
+http://tianzifang.cn/yangchenglank.server/yangchenglank/html/superboomi_service
+
 1. Register With Email
 
 short url:

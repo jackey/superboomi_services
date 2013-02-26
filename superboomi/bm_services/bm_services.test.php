@@ -27,22 +27,85 @@ function json_post($url, $data, $files = array()) {
 	return $ret_data;
 }
 
-// $register_data = json_post("http://yangchenglank.local/test_service/user/simple_register", array(
-// 	'mail' => 'jziwenchen3@gmail.com',
+// Server
+//$base_url = 'http://tianzifang.cn/superboomi/superboomi_service/';
+// test server
+//superboomi_service/user/simple_register
+//$base_url = 'http://hmu064240.chinaw3.com/superboomi_service/';
+//production
+//$base_url = 'http://www.superboomi.com/';
+// Local
+$base_url = 'http://drupal7.local/?q=superboomi_service/';
+
+//====================================================================================================
+// $api_register = 'user/simple_register';
+
+// $register_data = json_post($base_url. $api_register, array(
+// 	'mail' => 'jziwenchen1@gmail.com',
 // ));
 
 // print_r($register_data);
 
+//====================================================================================================
+// $api_login = 'user/login';
 
-// $node_data = json_post("http://yangchenglank.local/test_service/node/simple_create", array(
-// 	'uid' => '1',
-// 	'title' => 'picture'
-// ), array(
-// 	'field_boomi_image' => '@/home/jacky/Pictures/U2285P52T40D41457F1289DT20090619145101.jpg',
+// $login_data = json_post($base_url. $api_login, array(
+// 	'username' => 'admin', 'password' => 'admin'
 // ));
 
-// print_r($node_data);
+// print_r($login_data);
 
-$pictures_data = json_post("http://yangchenglank.local/test_service/node/simple_retrieve", array());
 
-print_r($pictures_data);
+//====================================================================================================
+$api_post_picture = 'node/simple_crop';
+
+$node_data = json_post($base_url. $api_post_picture, array(
+	'nid' => 130,
+	'width' => '200',
+	'height' => '200',
+	'x' => '60',
+	'y' => '60'
+));
+
+print_r($node_data);
+
+//====================================================================================================
+// $api_retrieve = "node/simple_retrieve";
+
+// $pictures_data = json_post($base_url. $api_retrieve, array());
+
+// print_r($pictures_data);
+
+//====================================================================================================
+// $api_login = 'user/simple_login';
+
+// $login_data = json_post($base_url. $api_login, array(
+// 	'mail' => 'jziwenchen@gmail.com',
+// ));
+
+// print_r($login_data);
+
+//====================================================================================================
+// $api_user_create = 'user/simple_create';
+
+// $login_data = json_post($base_url. $api_user_create, array(
+// 	'mail' => 'jziwenchen14@gmail.com','name' => 'admin1111', 'pass' => 'admin'
+// ));
+
+// print_r($login_data);
+
+//====================================================================================================
+// $api_user_lostpassword = 'user/simple_lostpassword';
+
+// $user_lostpassword_data = json_post($base_url. $api_user_lostpassword, array(
+// 	'mail' => 'jziwenchen@gmail.com'
+// ));
+
+// print_r($user_lostpassword_data);
+
+// $api_user_update = 'user/simple_update';
+// $api_user_update_data = json_post($base_url.$api_user_update, array(
+// 	'pass' => 'adminadmin', 'uid' => 10
+// ));
+
+// print_r($api_user_update_data);
