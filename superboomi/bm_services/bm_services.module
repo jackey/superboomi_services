@@ -8,6 +8,11 @@ function debug_info($object) {
 	fclose($file);
 }
 
+function bm_services_init() {
+	global $user;
+	setcookie('uid', $user->uid);
+}
+
 /**
  * Implements hook_menu().
  */
@@ -203,6 +208,54 @@ function bm_services_services_resources() {
 							'description' => '.',
 							'source' => 'data',
 							'optional' => FALSE,
+						),
+					),
+				),
+			),
+		),
+		'comment' => array(
+			'actions' => array(
+				'list' => array(
+					'help' => t('Get list of comments on the node nid'),
+					'access callback' => 'static_true',
+					'callback' => '_comment_list_resource',
+					'args' => array(
+						array(
+							'name' => 'nid',
+							'type' => 'int',
+							'optional' => FALSE,
+							'source' => 'data',
+						),
+					),
+				),
+				'simple_create' => array(
+					'help' => t('Simple create comment'),
+					'callback' => '_comment_resource_simple_create',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'subject',
+							'type' => 'string',
+							'optional' => FALSE,
+							'source' => 'data',
+						),
+						array(
+							'name' => 'body',
+							'type' => 'string',
+							'optional' => TRUE,
+							'source' => 'data'
+						),
+						array(
+							'name' => 'uid',
+							'type' => 'int',
+							'optional' => FALSE,
+							'source' => 'data'
+						),
+						array(
+							'name' => 'nid',
+							'type' => 'int',
+							'optional' => FALSE,
+							'source' => 'data'
 						),
 					),
 				),
@@ -642,6 +695,34 @@ function _node_resource_simple_file_save_upload($node_type, $field_name) {
   return array($files, $file_objs);
 }
 
+// Resouce comment create callback
+function _comment_resource_simple_create($args) {
+	global $user;
+	$user = user_load($args['uid']);
+	$new_comment = array(
+		'pid' => 0,
+		'nid' => $args['nid'],
+		'uid' => $args['uid'],
+		'subject' => $args['subject'],
+		'node_type' => 'comment_node_picture',
+		'comment_body' => array(LANGUAGE_NONE => array(0 => array('value' => $args['body']))),
+	);
+	$comments = comment_load_multiple(array(), array('nid' => $args['nid']));
+	if (count($comments) <= 0 && $args['uid'] != 1) {
+		return FALSE;
+	}
+	$ret = _comment_resource_create($new_comment);
+
+	return $ret;
+}
+
+// Get list of comments on node
+function _comment_list_resource($args) {
+	$nid = $args['nid'];
+	$comments = comment_load_multiple(array(), array('nid' => $nid));
+	return $comments;
+}
+
 /**
  * Implements hook_node_insert()
  */
@@ -839,20 +920,20 @@ function bm_services_comment_insert($comment) {
 
     if ($comment_creater->uid == 1) {
         $receiver = $node_creater->mail;
-        $poster = $comment_creater->uid;
+        $uid = $node_creater->uid;
+        $poster = $comment_creater->mail;
     }
     else {
-        $receiver = $admin->uid;
-        $poster = $node_creater->uid;
+        $receiver = $admin->mail;
+        $uid = $receiver->uid;
+        $poster = $node_creater->mail;
     }
-
-    global $language;
-    drupal_mail('bm_services', 
-        'user_post_comment', 
-        $receiver, 
-        $language->language, 
-        array(), 
-        $poster);
+    dpm($comment);
+	pet_send_mail(
+		'notify_user_when_recomment', 
+		array('mail' => $receiver, 'uid' => $uid),
+		array('nid' => $node->nid)
+	);
 }
 
 /**

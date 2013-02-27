@@ -21,6 +21,7 @@ function json_post($url, $data, $files = array()) {
 		$info = curl_getinfo($ch);
 	}
 	else {
+		print_r('error');
 		//error.
 	}
 	curl_close($ch);
@@ -57,17 +58,17 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 
 
 //====================================================================================================
-$api_post_picture = 'node/simple_crop';
+// $api_post_picture = 'node/simple_crop';
 
-$node_data = json_post($base_url. $api_post_picture, array(
-	'nid' => 130,
-	'width' => '200',
-	'height' => '200',
-	'x' => '60',
-	'y' => '60'
-));
+// $node_data = json_post($base_url. $api_post_picture, array(
+// 	'nid' => 130,
+// 	'width' => '200',
+// 	'height' => '200',
+// 	'x' => '60',
+// 	'y' => '60'
+// ));
 
-print_r($node_data);
+// print_r($node_data);
 
 //====================================================================================================
 // $api_retrieve = "node/simple_retrieve";
@@ -109,3 +110,27 @@ print_r($node_data);
 // ));
 
 // print_r($api_user_update_data);
+
+
+////////////////////////////////////// comment action ///////////////////////////////////////////
+
+// create
+$api_post_comment = 'comment/simple_create';
+$new_comment = array(
+	'uid' => 1,
+	'nid' => 3,
+	'subject' => 'hello, api',
+	'body' => 'hello, api again',
+);
+$api_post_comment_data = json_post($base_url.$api_post_comment, $new_comment);
+
+print_r($api_post_comment_data);
+
+// list comment
+// $api_list_comment = 'comment/list';
+// $data = array(
+// 	'nid' => 51,
+// );
+// $api_list_comment_data = json_post($base_url.$api_list_comment, $data);
+
+// print_r($api_list_comment_data);
