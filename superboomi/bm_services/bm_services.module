@@ -263,6 +263,19 @@ function bm_services_services_resources() {
 		),
 		'node' => array(
 			'actions' => array(
+				'simple_term_count' => array(
+					'help' => '',
+					'callback' => '_node_resource_simple_term_count',
+					'access callback' => 'static_true',
+					'args' => array(
+						array(
+							'name' => 'tid',
+							'type' => 'int',
+							'description' => '',
+							'source' => 'data',
+						),
+					),
+				),
 				'simple_create' => array(
 					'help' => t('Simple Create node'),
 					'callback' => '_node_resource_simple_create',
@@ -330,6 +343,23 @@ function bm_services_services_resources() {
 	);
 
 	return $definitions;
+}
+
+// Helper handler: count picture count from today for term
+function _node_resource_simple_term_count($args) {
+	$tid = $args['tid'];
+	$query = new EntityFieldQuery;
+	$today_date = date('Y-m-d');
+	$timestamp_start_today = strtotime($today_date);
+	$ret = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'picture')
+		->propertyCondition('status', 1)
+		->propertyCondition('created', $timestamp_start_today, '>')
+		->fieldCondition('field_boomi_terms', 'tid', $tid)
+		->execute();
+	$nids = $ret['node'];
+	
+	return count($nids);
 }
 
 // resource handler: crop image of node

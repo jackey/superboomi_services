@@ -115,16 +115,16 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 ////////////////////////////////////// comment action ///////////////////////////////////////////
 
 // create
-$api_post_comment = 'comment/simple_create';
-$new_comment = array(
-	'uid' => 1,
-	'nid' => 3,
-	'subject' => 'hello, api',
-	'body' => 'hello, api again',
-);
-$api_post_comment_data = json_post($base_url.$api_post_comment, $new_comment);
+// $api_post_comment = 'comment/simple_create';
+// $new_comment = array(
+// 	'uid' => 1,
+// 	'nid' => 3,
+// 	'subject' => 'hello, api',
+// 	'body' => 'hello, api again',
+// );
+// $api_post_comment_data = json_post($base_url.$api_post_comment, $new_comment);
 
-print_r($api_post_comment_data);
+// print_r($api_post_comment_data);
 
 // list comment
 // $api_list_comment = 'comment/list';
@@ -134,3 +134,10 @@ print_r($api_post_comment_data);
 // $api_list_comment_data = json_post($base_url.$api_list_comment, $data);
 
 // print_r($api_list_comment_data);
+
+
+// node count for term
+$api_post_comment = 'node/simple_term_count';
+$api_post_comment_data = json_post($base_url.$api_post_comment, array('tid' => 1));
+
+print_r($api_post_comment_data);
