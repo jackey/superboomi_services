@@ -957,8 +957,17 @@ function bm_services_comment_insert($comment) {
         $receiver = $admin->mail;
         $uid = $receiver->uid;
         $poster = $node_creater->mail;
+	    // Heartbeat
+	    //!username 
+	    heartbeat_api_log('heartbeat_tweet', $comment->uid, 0, $node->nid, 0, array(
+	        '!message' => t('Post comment @title', array('@title' => $comment->subject)),
+	        '!username'=> l(user_load($comment->uid)->name, 'user/'. $comment->uid),
+	    ), HEARTBEAT_PUBLIC_TO_ALL, $comment->created);
     }
-    dpm($comment);
+
+
+
+    // Send email
 	pet_send_mail(
 		'notify_user_when_recomment', 
 		array('mail' => $receiver, 'uid' => $uid),
