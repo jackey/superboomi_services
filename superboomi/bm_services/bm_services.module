@@ -754,17 +754,19 @@ function _comment_list_resource($args) {
 }
 
 function bm_services_sort_comment_by_created($comments) {
-	usort($comments, function ($a, $b) {
-		if ($a->created == $b->created) return 0;
-
-		return ($a->created > $b->created) ? -1 : 1;
-	});
+	usort($comments, 'callback_sort_comment');
 	$new_comments = array();
 	foreach($comments as $comment) {
 		$new_comments[$comment->cid] = $comment;
 	}
 
 	return $new_comments;
+}
+
+function callback_sort_comment($a, $b) {
+	if ($a->created == $b->created) return 0;
+
+	return ($a->created > $b->created) ? -1 : 1;
 }
 
 /**
