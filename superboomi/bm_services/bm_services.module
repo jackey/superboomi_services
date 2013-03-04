@@ -750,7 +750,21 @@ function _comment_resource_simple_create($args) {
 function _comment_list_resource($args) {
 	$nid = $args['nid'];
 	$comments = comment_load_multiple(array(), array('nid' => $nid));
-	return $comments;
+	return bm_services_sort_comment_by_created($comments);
+}
+
+function bm_services_sort_comment_by_created($comments) {
+	usort($comments, function ($a, $b) {
+		if ($a->created == $b->created) return 0;
+
+		return ($a->created > $b->created) ? -1 : 1;
+	});
+	$new_comments = array();
+	foreach($comments as $comment) {
+		$new_comments[$comment->cid] = $comment;
+	}
+
+	return $new_comments;
 }
 
 /**

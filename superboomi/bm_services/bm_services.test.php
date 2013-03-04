@@ -36,7 +36,7 @@ function json_post($url, $data, $files = array()) {
 //production
 //$base_url = 'http://www.superboomi.com/';
 // Local
-$base_url = 'http://drupal7.local/?q=superboomi_service/';
+$base_url = 'http://drupal7.local:81/?q=superboomi_service/';
 
 //====================================================================================================
 // $api_register = 'user/simple_register';
@@ -127,17 +127,18 @@ $base_url = 'http://drupal7.local/?q=superboomi_service/';
 // print_r($api_post_comment_data);
 
 // list comment
-// $api_list_comment = 'comment/list';
-// $data = array(
-// 	'nid' => 51,
-// );
-// $api_list_comment_data = json_post($base_url.$api_list_comment, $data);
+$api_list_comment = 'comment/list';
+$data = array(
+	'nid' => 51,
+);
+$api_list_comment_data = json_post($base_url.$api_list_comment, $data);
 
-// print_r($api_list_comment_data);
+$api_list_comment_data = json_decode($api_list_comment_data);
+print_r($api_list_comment_data);
 
 
 // node count for term
-$api_post_comment = 'node/simple_term_count';
-$api_post_comment_data = json_post($base_url.$api_post_comment, array('tid' => 1));
+// $api_post_comment = 'node/simple_term_count';
+// $api_post_comment_data = json_post($base_url.$api_post_comment, array('tid' => 1));
 
-print_r($api_post_comment_data);
+// print_r($api_post_comment_data);
