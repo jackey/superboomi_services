@@ -91,11 +91,13 @@ function update_user_picture() {
 	if (!$file = file_save_upload('picture_upload', $validators, FALSE, FILE_EXISTS_RENAME) ) {  	
 		return bm_services_error(t('Failed to upload file. @upload', array('@upload' => $field_name)), 406);
 	}
-	$edit_user = user_load($uid);
-	$edit_user->picture = $file;
-	user_save($edit_user);
+	else {
+		$edit_user = user_load($uid);
+		$edit_user->picture = $file;
+		user_save($edit_user);
 
-	print json_encode(array('user' => $edit_user, 'uri' => file_create_url($edit_user->picture->uri)));
+		print json_encode(array('user' => $edit_user, 'uri' => file_create_url($edit_user->picture->uri)));
+	}
 	die();
 }
 
